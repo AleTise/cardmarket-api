@@ -1,4 +1,4 @@
-from cardmarket_api import generate_nonce, generate_timestamp
+from utils.oauth_utils import generate_nonce, generate_timestamp
 
 
 def test_generate_nonce():

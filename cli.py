@@ -8,8 +8,21 @@ from cardmarket_api import (
     get_stock
 )
 
-import click
+from dotenv import load_dotenv
 
+import click
+import os
+
+
+@click.command()
+def setup():
+    """Mostra le variabili d'ambiente caricate."""
+    load_dotenv()
+    print("Variabili d'ambiente caricate:")
+    print(f"CONSUMER_KEY = {os.getenv('CONSUMER_KEY')}")
+    print(f"CONSUMER_SECRET = {os.getenv('CONSUMER_SECRET')}")
+    print(f"ACCESS_TOKEN = {os.getenv('ACCESS_TOKEN')}")
+    print(f"TOKEN_SECRET = {os.getenv('TOKEN_SECRET')}")
 
 @click.group()
 def cli():
@@ -54,6 +67,8 @@ def product(product_id):
 def selloffers(product_id):
     """Offerte di vendita"""
     get_sell_offers(product_id)
+
+cli.add_command(setup)
 
 if __name__ == '__main__':
     cli()
