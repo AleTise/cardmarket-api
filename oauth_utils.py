@@ -5,6 +5,7 @@ import hmac
 import hashlib
 import base64
 
+
 def generate_nonce(lenght= 8):
     return ''.join([str(random.randint(0, 9)) for _ in range(lenght)])
 
@@ -33,4 +34,3 @@ def signature_request(base_string, consumer_secret, token_secret= ''):
     ).digest()
 
     return base64.b64encode(signature).decode('utf-8')
-

@@ -1,45 +1,42 @@
-import requests
-import urllib.parse
-from oauth_utils import (
-    generate_nonce,
-    generate_timestamp,
-    build_signature_base_string,
-    signature_request
-)
+from cardmarket_api import (
+    search_products,
+    get_user_info,
+    get_product_details,
+    get_sell_offers,
+    get_orders
+    )
 
-#Inserire qui le credenziali non appena fornite da Cardmarket
-CONSUMER_KEY = 'consumer_key'
-CONSUMER_SECRET = 'consumer_secret'
-ACCESS_TOKEN = 'access_token'
-TOKEN_SECRET = 'token_secret'
+import argparse
 
-def get_user_info(username):
-    method = 'GET'
-    base_url = f'https://api.cardmarket.com/ws/v2.0/output.json/users/{username}'
 
-    oauth_params = {
-        'oauth_consumer_key': CONSUMER_KEY,
-        'oauth_token': ACCESS_TOKEN,
-        'oauth_nonce': generate_nonce(),
-        'oauth_timestamp': generate_timestamp(),
-        'oauth_signature_method': 'HMAC-SHA1',
-        'oauth_version': '1.0'
-    }
+def main():
+    parser = argparse.ArgumentParser(description='Interfaccia CLI Cardmarket API')
+    parser.add_argument('--user', help= 'Mostra info utente dato username')
+    parser.add_argument('--search', help= 'Cerca prodotti per nome')
+    parser.add_argument('--orders',action= 'store_true', help= 'Mostra ordini')
+    parser.add_argument('--product', type= int, help= 'Dettagli prodotto per ID')
+    parser.add_argument('--selloffers', type= int, help= 'Offerte vendita per ID prodotto')
 
-    base_string = build_signature_base_string(method, base_url, oauth_params)
-    signature = signature_request(base_string, CONSUMER_SECRET, TOKEN_SECRET)
-    oauth_params['oauth_signature'] = signature
+    args = parser.parse_args()
 
-    auth_header = 'OAuth ' + ', '.join([f'{k}="{urllib.parse.quote(str(v))}"' for k, v in oauth_params.items()])
-
-    headers = {
-        'Authorization': auth_header,
-        'Accept': 'application/json'
-    }
-
-    response = requests.get(base_url, headers= headers)
-    print(f'Status code: {response.status_code}')
-    print(response.text)
+    if args.user:
+        get_user_info(args.user)
+    elif args.search:
+        search_products(args.search)
+    elif args.orders:
+        get_orders()
+    elif args.product:
+        get_product_details(args.product)
+    elif args.selloffers:
+        get_sell_offers(args.selloffers)
+    else:
+        parser.print_help()
+    
 
 if __name__ == '__main__':
-    get_user_info('nobueno11')
+    #get_user_info('nobueno11')
+    #search_products('Charizard')
+    #get_product_details(31123)
+    #get_sell_offers(31123)
+    #get_orders()
+    main()
